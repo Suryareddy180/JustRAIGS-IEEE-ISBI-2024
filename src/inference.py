@@ -202,12 +202,12 @@ def run():
         model_info['CFG'] = CFG
         model_info['CFG']['checkpoint'] = model_info['weights_path_local']
 
-        # assert os.path.exists(model_info['cfg_path']), model_info['cfg_path']
-        # assert os.path.exists(model_info['weights_path']), model_info['weights_path']
-        # with open(model_info['cfg_path']) as f:
-        #     CFG = json.load(f)
-        # model_info['CFG'] = CFG
-        # model_info['CFG']['checkpoint'] = model_info['weights_path']
+        assert os.path.exists(model_info['cfg_path']), model_info['cfg_path']
+        assert os.path.exists(model_info['weights_path']), model_info['weights_path']
+        with open(model_info['cfg_path']) as f:
+            CFG = json.load(f)
+        model_info['CFG'] = CFG
+        model_info['CFG']['checkpoint'] = model_info['weights_path']
 
     for model_info in model_info_list:
         model_info['model'] = load_model(model_info['CFG']).cuda()
