@@ -222,7 +222,7 @@ def run():
 
 
     _show_torch_cuda_info()
-    for jpg_image_file_name, save_prediction in inference_tasks( input_folder="test/input/stacked-color-fundus-images/images", output_folder="output"):
+    for jpg_image_file_name, save_prediction in inference_tasks( input_folder="test\input\stacked-color-fundus-images\images\.ipynb_checkpoints", output_folder="test\output\.ipynb_checkpoints"):
         print(f"Running inference on {jpg_image_file_name}")
         #
         # # transform image
