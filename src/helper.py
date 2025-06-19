@@ -22,11 +22,11 @@ DEFAULT_GLAUCOMATOUS_FEATURES = {
 
 def inference_tasks(input_folder="test/input", output_folder="output"):
     input_files = [x for x in Path(input_folder).rglob("*") if x.is_file()]
-    print("Input Files:")
+    
+    print("\n=+= Input Files Found =+=")
     pprint(input_files)
 
     os.makedirs(output_folder, exist_ok=True)
-
     justification_stack = []
 
     def save_prediction(is_referable_glaucoma, likelihood_referable_glaucoma, glaucomatous_features=None):
@@ -34,16 +34,19 @@ def inference_tasks(input_folder="test/input", output_folder="output"):
         justification_stack.append(features)
 
     for file_path in input_files:
-        if file_path.suffix == ".mha":
+        suffix = file_path.suffix.lower()
+        if suffix == ".mha":
             yield from single_file_inference(file_path, save_prediction)
-        elif file_path.suffix == ".tiff":
+        elif suffix == ".tiff":
             yield from stack_inference(file_path, save_prediction)
+        else:
+            print(f"⚠️ Skipping unsupported file type: {file_path.name}")
 
     write_glaucomatous_features(justification_stack, output_folder)
 
 def single_file_inference(image_file, callback):
     with tempfile.TemporaryDirectory() as temp_dir:
-        image = sitk.ReadImage(image_file)
+        image = sitk.ReadImage(str(image_file))
         output_path = Path(temp_dir) / "image.jpg"
         sitk.WriteImage(image, str(output_path))
         yield output_path, callback
@@ -57,13 +60,12 @@ def stack_inference(stack, callback):
                 output_path = Path(temp_dir) / f"image_{page_num + 1}.jpg"
                 tiff_image.save(output_path, "JPEG")
                 de_stacked_images.append(output_path)
-                print(f"De-Stacked {output_path}")
+                print(f"🖼️ De-Stacked {output_path}")
         for image in de_stacked_images:
             yield image, callback
 
 def write_glaucomatous_features(result, output_folder):
-    os.makedirs(output_folder, exist_ok=True)
     output_path = Path(output_folder) / "multiple-justification-binary.json"
     with open(output_path, "w") as f:
-        f.write(json.dumps(result))
-    print(f"Glaucomatous features written to {output_path}")
+        json.dump(result, f, indent=2)
+    print(f"\n✅ Glaucomatous features written to {output_path}")
