@@ -193,14 +193,17 @@ def run():
             'justification_thresholds_TTA': [0.42, 0.366, 0.6, 0.678, 0.692, 0.723, 0.758, 0.164, 0.519, 0.821],
         },
     ]
+    for model_info in model_info_list:
+        model_info['cfg_path'] = model_info['cfg_path_local']
+        model_info['weights_path'] = model_info['weights_path_local']
 
     for model_info in model_info_list:
-        assert os.path.exists(model_info['cfg_path_local']), model_info['cfg_path_local']
-        assert os.path.exists(model_info['weights_path_local']), model_info['weights_path_local']
-        with open(model_info['cfg_path_local']) as f:
-            CFG = json.load(f)
-        model_info['CFG'] = CFG
-        model_info['CFG']['checkpoint'] = model_info['weights_path_local']
+        # assert os.path.exists(model_info['cfg_path_local']), model_info['cfg_path_local']
+        # assert os.path.exists(model_info['weights_path_local']), model_info['weights_path_local']
+        # with open(model_info['cfg_path_local']) as f:
+        #     CFG = json.load(f)
+        # model_info['CFG'] = CFG
+        # model_info['CFG']['checkpoint'] = model_info['weights_path_local']
 
         assert os.path.exists(model_info['cfg_path']), model_info['cfg_path']
         assert os.path.exists(model_info['weights_path']), model_info['weights_path']
